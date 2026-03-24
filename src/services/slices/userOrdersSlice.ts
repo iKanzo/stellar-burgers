@@ -59,9 +59,7 @@ export const userOrdersSlice = createSlice({
 
 export const { clearUserOrders, addOrder } = userOrdersSlice.actions;
 
-export const selectUserOrders = (state: RootState) => {
-  return state.userOrders.orders;
-};
+export const selectUserOrders = (state: RootState) => state.userOrders.orders;
 export const selectUserOrdersLoading = (state: RootState) =>
   state.userOrders.isLoading;
 export const selectUserOrdersError = (state: RootState) =>
