@@ -1,6 +1,5 @@
 import { FC } from 'react';
-import { Preloader } from '../ui/preloader';
-import { IngredientDetailsUI } from '../ui/ingredient-details';
+import { IngredientDetailsUI, Preloader } from '@ui';
 
 export const IngredientDetails: FC = () => {
   /** TODO: взять переменную из стора */

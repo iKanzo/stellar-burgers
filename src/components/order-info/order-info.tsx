@@ -1,6 +1,5 @@
 import { FC, useMemo } from 'react';
-import { Preloader } from '../ui/preloader';
-import { OrderInfoUI } from '../ui/order-info';
+import { OrderInfoUI, Preloader } from '@ui';
 import { TIngredient } from '@utils-types';
 
 export const OrderInfo: FC = () => {
@@ -17,7 +16,6 @@ export const OrderInfo: FC = () => {
 
   const ingredients: TIngredient[] = [];
 
-  /* Готовим данные для отображения */
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length) return null;
 
