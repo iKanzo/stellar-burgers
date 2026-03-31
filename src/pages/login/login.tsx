@@ -24,9 +24,6 @@ export const Login: FC = () => {
 
     dispatch(loginUser({ email, password }))
       .unwrap()
-      .then(() => {
-        navigate('/', { replace: true });
-      })
       .catch(() => {});
   };
 

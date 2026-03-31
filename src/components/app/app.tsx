@@ -62,23 +62,17 @@ const App = () => {
     })();
   }, [dispatch]);
 
-  if (isIngredientsLoading || !isAuthChecked) {
-    return (
-      <div className={styles.app}>
-        <AppHeader />
+  return (
+    <div className={styles.app}>
+      <AppHeader />
+
+      {isIngredientsLoading || !isAuthChecked ? (
         <div
           style={{ display: 'flex', justifyContent: 'center', marginTop: 100 }}
         >
           <Preloader />
         </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className={styles.app}>
-        <AppHeader />
+      ) : error ? (
         <div
           style={{
             display: 'flex',
@@ -89,100 +83,140 @@ const App = () => {
         >
           <p className='text text_type_main-medium'>Ошибка: {error}</p>
         </div>
-      </div>
-    );
-  }
+      ) : (
+        <>
+          <Routes location={background || location}>
+            <Route path='/' element={<ConstructorPage />} />
+            <Route path='/feed' element={<Feed />} />
 
-  return (
-    <div className={styles.app}>
-      <AppHeader />
+            <Route
+              path='/ingredients/:id'
+              element={
+                <div className={styles.detailPageWrap}>
+                  <p
+                    className={`text text_type_main-large ${styles.detailHeader}`}
+                  >
+                    Детали ингредиента
+                  </p>
+                  <IngredientDetails />
+                </div>
+              }
+            />
 
-      <Routes location={background || location}>
-        <Route path='/' element={<ConstructorPage />} />
-        <Route path='/feed' element={<Feed />} />
-
-        <Route
-          path='/login'
-          element={
-            <ProtectedRoute onlyUnAuth>
-              <Login />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path='/register'
-          element={
-            <ProtectedRoute onlyUnAuth>
-              <Register />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path='/forgot-password'
-          element={
-            <ProtectedRoute onlyUnAuth>
-              <ForgotPassword />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path='/reset-password'
-          element={
-            <ProtectedRoute onlyUnAuth>
-              <ResetPassword />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path='/profile'
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path='/profile/orders'
-          element={
-            <ProtectedRoute>
-              <ProfileOrders />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route path='*' element={<NotFound404 />} />
-      </Routes>
-
-      {background && (
-        <Routes>
-          <Route
-            path='/feed/:number'
-            element={
-              <Modal title='Детали заказа' onClose={handleModalClose}>
-                <OrderInfo />
-              </Modal>
-            }
-          />
-          <Route
-            path='/ingredients/:id'
-            element={
-              <Modal title='Детали ингредиента' onClose={handleModalClose}>
-                <IngredientDetails />
-              </Modal>
-            }
-          />
-          <Route
-            path='/profile/orders/:number'
-            element={
-              <ProtectedRoute>
-                <Modal title='Детали заказа' onClose={handleModalClose}>
+            <Route
+              path='/feed/:number'
+              element={
+                <div className={styles.detailPageWrap}>
+                  <p
+                    className={`text text_type_main-large ${styles.detailHeader}`}
+                  >
+                    Детали заказа
+                  </p>
                   <OrderInfo />
-                </Modal>
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
+                </div>
+              }
+            />
+
+            <Route
+              path='/profile/orders/:number'
+              element={
+                <ProtectedRoute>
+                  <div className={styles.detailPageWrap}>
+                    <p
+                      className={`text text_type_main-large ${styles.detailHeader}`}
+                    >
+                      Детали заказа
+                    </p>
+                    <OrderInfo />
+                  </div>
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path='/login'
+              element={
+                <ProtectedRoute onlyUnAuth>
+                  <Login />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path='/register'
+              element={
+                <ProtectedRoute onlyUnAuth>
+                  <Register />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path='/forgot-password'
+              element={
+                <ProtectedRoute onlyUnAuth>
+                  <ForgotPassword />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path='/reset-password'
+              element={
+                <ProtectedRoute onlyUnAuth>
+                  <ResetPassword />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path='/profile'
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path='/profile/orders'
+              element={
+                <ProtectedRoute>
+                  <ProfileOrders />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route path='*' element={<NotFound404 />} />
+          </Routes>
+
+          {background && (
+            <Routes>
+              <Route
+                path='/feed/:number'
+                element={
+                  <Modal title='Детали заказа' onClose={handleModalClose}>
+                    <OrderInfo />
+                  </Modal>
+                }
+              />
+              <Route
+                path='/ingredients/:id'
+                element={
+                  <Modal title='Детали ингредиента' onClose={handleModalClose}>
+                    <IngredientDetails />
+                  </Modal>
+                }
+              />
+              <Route
+                path='/profile/orders/:number'
+                element={
+                  <ProtectedRoute>
+                    <Modal title='Детали заказа' onClose={handleModalClose}>
+                      <OrderInfo />
+                    </Modal>
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          )}
+        </>
       )}
     </div>
   );

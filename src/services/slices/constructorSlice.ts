@@ -20,26 +20,43 @@ export const constructorSlice = createSlice({
   name: 'constructor',
   initialState,
   reducers: {
-    setBun(state, action: PayloadAction<TIngredient>) {
-      state.bun = {
-        ...action.payload,
-        id: nanoid()
-      };
+    setBun: {
+      reducer(state, action: PayloadAction<TConstructorIngredient>) {
+        state.bun = action.payload;
+      },
+      prepare(ingredient: TIngredient) {
+        return { payload: { ...ingredient, id: nanoid() } };
+      }
     },
 
-    addIngredient(state, action: PayloadAction<TIngredient>) {
-      if (!action.payload) return;
-
-      state.ingredients.push({
-        ...action.payload,
-        id: nanoid()
-      });
+    addIngredient: {
+      reducer(state, action: PayloadAction<TConstructorIngredient>) {
+        state.ingredients.push(action.payload);
+      },
+      prepare(ingredient: TIngredient) {
+        return { payload: { ...ingredient, id: nanoid() } };
+      }
     },
 
     removeIngredient(state, action: PayloadAction<string>) {
-      state.ingredients = Array.isArray(state.ingredients)
-        ? state.ingredients.filter((item) => item.id !== action.payload)
-        : [];
+      state.ingredients = state.ingredients.filter(
+        (item) => item.id !== action.payload
+      );
+    },
+
+    moveIngredient(state, action: PayloadAction<{ from: number; to: number }>) {
+      const { from, to } = action.payload;
+      if (
+        from < 0 ||
+        to < 0 ||
+        from >= state.ingredients.length ||
+        to >= state.ingredients.length
+      ) {
+        return;
+      }
+      const temp = state.ingredients[from];
+      state.ingredients.splice(from, 1);
+      state.ingredients.splice(to, 0, temp);
     },
 
     clearConstructor(state) {
@@ -49,8 +66,13 @@ export const constructorSlice = createSlice({
   }
 });
 
-export const { setBun, addIngredient, removeIngredient, clearConstructor } =
-  constructorSlice.actions;
+export const {
+  setBun,
+  addIngredient,
+  removeIngredient,
+  moveIngredient,
+  clearConstructor
+} = constructorSlice.actions;
 
 export const selectConstructor = (state: RootState) => state.burgerConstructor;
 

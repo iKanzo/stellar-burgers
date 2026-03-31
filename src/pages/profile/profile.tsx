@@ -9,7 +9,6 @@ import {
   updateUser
 } from '../../services/slices/userSlice';
 import { Preloader } from '@ui';
-import { ProfileMenu } from '@components';
 
 export const Profile: FC = () => {
   const dispatch = useDispatch();
@@ -109,15 +108,12 @@ export const Profile: FC = () => {
   }
 
   return (
-    <>
-      <ProfileMenu />
-      <ProfileUI
-        formValue={formValue}
-        isFormChanged={isFormChanged}
-        handleCancel={handleCancel}
-        handleSubmit={handleSubmit}
-        handleInputChange={handleInputChange}
-      />
-    </>
+    <ProfileUI
+      formValue={formValue}
+      isFormChanged={isFormChanged}
+      handleCancel={handleCancel}
+      handleSubmit={handleSubmit}
+      handleInputChange={handleInputChange}
+    />
   );
 };

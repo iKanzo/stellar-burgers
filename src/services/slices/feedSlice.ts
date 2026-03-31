@@ -3,14 +3,11 @@ import { getFeedsApi } from '@api';
 import { TOrder } from '@utils-types';
 import { RootState } from '../store';
 
-export const getFeed = createAsyncThunk('feed/getFeed', async () => {
-  try {
-    const response = await getFeedsApi();
-    return response;
-  } catch (error) {
-    throw error;
-  }
-});
+type TFeedResponse = { orders: TOrder[]; total: number; totalToday: number };
+export const getFeed = createAsyncThunk<TFeedResponse>(
+  'feed/getFeed',
+  getFeedsApi
+);
 
 interface FeedState {
   orders: TOrder[];
@@ -50,6 +47,8 @@ export const feedSlice = createSlice({
       });
   }
 });
+
+export const selectFeed = (state: RootState) => state.feed;
 
 export const selectFeedOrders = (state: RootState) => state.feed.orders;
 export const selectFeedTotal = (state: RootState) => state.feed.total;
