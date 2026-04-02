@@ -7,59 +7,63 @@ import {
   Logo,
   ProfileIcon
 } from '@zlden/react-developer-burger-ui-components';
-import { useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
-export const AppHeaderUI: FC<TAppHeaderUIProps> = ({ userName }) => {
-  const navigate = useNavigate();
+export const AppHeaderUI: FC<TAppHeaderUIProps> = ({ userName }) => (
+  <header className={styles.header}>
+    <nav className={`${styles.menu} p-4`}>
+      <div className={styles.menu_part_left}>
+        <NavLink
+          to='/'
+          end
+          className={({ isActive }) =>
+            `${styles.link_position_last} ${isActive ? styles.link_active : ''}`
+          }
+        >
+          {({ isActive }) => (
+            <>
+              <BurgerIcon type={isActive ? 'primary' : 'secondary'} />
+              <p className='text text_type_main-default ml-2 mr-10'>
+                Конструктор
+              </p>
+            </>
+          )}
+        </NavLink>
 
-  return (
-    <header className={styles.header}>
-      <nav className={`${styles.menu} p-4`}>
-        <div className={styles.menu_part_left}>
-          <div
-            className={styles.link_position_last}
-            onClick={() => {
-              navigate('/');
-            }}
-          >
-            <BurgerIcon type={'primary'} />
-            <p
-              onClick={() => navigate('/')}
-              className='text text_type_main-default ml-2 mr-10'
-            >
-              Конструктор
+        <NavLink
+          to='/feed'
+          className={({ isActive }) =>
+            `${styles.link_position_last} ${isActive ? styles.link_active : ''}`
+          }
+        >
+          {({ isActive }) => (
+            <>
+              <ListIcon type={isActive ? 'primary' : 'secondary'} />
+              <p className='text text_type_main-default ml-2'>Лента заказов</p>
+            </>
+          )}
+        </NavLink>
+      </div>
+
+      <NavLink to='/' className={styles.logo}>
+        <Logo className={styles.logo_icon} />
+      </NavLink>
+
+      <NavLink
+        to='/profile'
+        className={({ isActive }) =>
+          `${styles.link_position_last} ${isActive ? styles.link_active : ''}`
+        }
+      >
+        {({ isActive }) => (
+          <>
+            <ProfileIcon type={isActive ? 'primary' : 'secondary'} />
+            <p className='text text_type_main-default ml-2'>
+              {userName || 'Личный кабинет'}
             </p>
-          </div>
-          <div
-            className={styles.link_position_last}
-            onClick={() => {
-              navigate('/feed');
-            }}
-          >
-            <ListIcon type={'primary'} />
-            <p className='text text_type_main-default ml-2'>Лента заказов</p>
-          </div>
-        </div>
-        <div
-          onClick={() => {
-            navigate('/');
-          }}
-          className={styles.logo}
-        >
-          <Logo className='' />
-        </div>
-        <div
-          className={styles.link_position_last}
-          onClick={() => {
-            navigate('/profile');
-          }}
-        >
-          <ProfileIcon type={'primary'} />
-          <p className='text text_type_main-default ml-2'>
-            {userName || 'Личный кабинет'}
-          </p>
-        </div>
-      </nav>
-    </header>
-  );
-};
+          </>
+        )}
+      </NavLink>
+    </nav>
+  </header>
+);

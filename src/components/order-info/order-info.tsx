@@ -1,10 +1,11 @@
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { OrderInfoUI, Preloader } from '@ui';
 import { useSelector } from '../../services/store';
-import { TIngredient } from '@utils-types';
+import { TIngredient, TOrder } from '@utils-types';
 import { selectIngredients } from '../../services/slices/ingredientsSlice';
 import { selectFeedOrders } from '../../services/slices/feedSlice';
+import { getOrderByNumberApi } from '../../utils/burger-api';
 
 export const OrderInfo: FC = () => {
   const { number } = useParams();
@@ -12,7 +13,18 @@ export const OrderInfo: FC = () => {
   const ingredients = useSelector(selectIngredients);
   const orders = useSelector(selectFeedOrders);
 
-  const orderData = orders.find((order) => String(order.number) === number);
+  const [orderFromApi, setOrderFromApi] = useState<TOrder | null>(null);
+
+  const orderData =
+    orders.find((order) => String(order.number) === number) || orderFromApi;
+
+  useEffect(() => {
+    if (!number || orderData) return;
+
+    getOrderByNumberApi(number)
+      .then((data) => setOrderFromApi(data))
+      .catch((err) => console.error(err));
+  }, [number, orderData]);
 
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length) return null;

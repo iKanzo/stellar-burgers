@@ -47,16 +47,11 @@ const App = () => {
 
   useEffect(() => {
     (async () => {
-      const token = localStorage.getItem('refreshToken');
-      if (token) {
-        try {
-          await dispatch(getUser()).unwrap();
-        } catch (err) {
-          console.warn('Не удалось получить пользователя', err);
-        } finally {
-          dispatch(setAuthChecked());
-        }
-      } else {
+      try {
+        await dispatch(getUser()).unwrap();
+      } catch (err) {
+        console.warn(err);
+      } finally {
         dispatch(setAuthChecked());
       }
     })();

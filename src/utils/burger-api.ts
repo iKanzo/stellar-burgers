@@ -169,6 +169,14 @@ export const orderBurgerApi = (data: string[]) =>
     })
   });
 
+export const getOrderByNumberApi = (number: string) =>
+  fetch(`${URL}/orders/${number}`)
+    .then((res) => checkResponse<TServerResponse<{ orders: TOrder[] }>>(res))
+    .then((data) => {
+      if (data.success) return data.orders[0];
+      return Promise.reject(data);
+    });
+
 export type TRegisterData = {
   email: string;
   name: string;

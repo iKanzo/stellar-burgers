@@ -15,10 +15,7 @@ export const ProfileOrders: FC = () => {
   const isLoading = useSelector(selectUserOrdersLoading);
 
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      dispatch(getUserOrders());
-    }
+    dispatch(getUserOrders());
   }, [dispatch]);
 
   if (isLoading && !orders?.length) {
