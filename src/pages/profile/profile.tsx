@@ -1,25 +1,39 @@
 import { ProfileUI } from '@ui-pages';
 import { FC, SyntheticEvent, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from '../../services/store';
+import {
+  getUser,
+  selectUser,
+  selectUserError,
+  selectUserLoading,
+  updateUser
+} from '../../services/slices/userSlice';
+import { Preloader } from '@ui';
 
 export const Profile: FC = () => {
-  /** TODO: взять переменную из стора */
-  const user = {
-    name: '',
-    email: ''
-  };
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser);
+  const isLoading = useSelector(selectUserLoading);
+  const error = useSelector(selectUserError);
 
   const [formValue, setFormValue] = useState({
-    name: user.name,
-    email: user.email,
+    name: user?.name || '',
+    email: user?.email || '',
     password: ''
   });
 
   useEffect(() => {
-    setFormValue((prevState) => ({
-      ...prevState,
-      name: user?.name || '',
-      email: user?.email || ''
-    }));
+    dispatch(getUser());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (user) {
+      setFormValue({
+        name: user.name,
+        email: user.email,
+        password: ''
+      });
+    }
   }, [user]);
 
   const isFormChanged =
@@ -29,15 +43,32 @@ export const Profile: FC = () => {
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
+
+    const updatedData: { name?: string; email?: string; password?: string } =
+      {};
+    if (formValue.name !== user?.name) updatedData.name = formValue.name;
+    if (formValue.email !== user?.email) updatedData.email = formValue.email;
+    if (formValue.password) updatedData.password = formValue.password;
+
+    if (Object.keys(updatedData).length > 0) {
+      dispatch(updateUser(updatedData))
+        .unwrap()
+        .then(() => {
+          setFormValue((prev) => ({ ...prev, password: '' }));
+        })
+        .catch(() => {});
+    }
   };
 
   const handleCancel = (e: SyntheticEvent) => {
     e.preventDefault();
-    setFormValue({
-      name: user.name,
-      email: user.email,
-      password: ''
-    });
+    if (user) {
+      setFormValue({
+        name: user.name,
+        email: user.email,
+        password: ''
+      });
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,6 +77,35 @@ export const Profile: FC = () => {
       [e.target.name]: e.target.value
     }));
   };
+
+  if (isLoading && !user) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          marginTop: '100px'
+        }}
+      >
+        <Preloader />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          marginTop: '100px',
+          color: 'red'
+        }}
+      >
+        <p className='text text_type_main-medium'>{error}</p>
+      </div>
+    );
+  }
 
   return (
     <ProfileUI
@@ -56,6 +116,4 @@ export const Profile: FC = () => {
       handleInputChange={handleInputChange}
     />
   );
-
-  return null;
 };
