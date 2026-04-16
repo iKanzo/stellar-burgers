@@ -1,6 +1,4 @@
 describe('тесты для страницы конструктора бургера', () => {
-  const testUrl = 'http://localhost:4000/';
-
   const selectors = {
     ingredient: '[data-cy^="ingredient-item-"]',
     modal: '[data-cy="modal-window"]',
@@ -11,6 +9,14 @@ describe('тесты для страницы конструктора бурге
     filling: '[data-cy="filling"]',
     orderButton: '[data-cy="orderButton"]'
   };
+
+  const getIngredient = (id: string) =>
+    cy.get(`[data-cy="ingredient-item-${id}"]`);
+
+  const addIngredient = (id: string) =>
+    getIngredient(id).contains('Добавить').click();
+
+  const openIngredient = (id: string) => getIngredient(id).first().click();
 
   let ingredients: any;
 
@@ -31,7 +37,7 @@ describe('тесты для страницы конструктора бурге
         }
       }).as('getUser');
 
-      cy.visit(testUrl);
+      cy.visit('/');
 
       cy.wait('@getIngredients');
       cy.wait('@getUser');
@@ -47,22 +53,16 @@ describe('тесты для страницы конструктора бурге
     const main = ingredients.data.find((i: any) => i.type === 'main');
     const sauce = ingredients.data.find((i: any) => i.type === 'sauce');
 
-    cy.get(`[data-cy="ingredient-item-${bun._id}"]`)
-      .contains('Добавить')
-      .click();
+    addIngredient(bun._id);
 
     cy.get(selectors.topBun).should('contain.text', bun.name);
     cy.get(selectors.bottomBun).should('contain.text', bun.name);
 
-    cy.get(`[data-cy="ingredient-item-${main._id}"]`)
-      .contains('Добавить')
-      .click();
+    addIngredient(main._id);
 
     cy.get(selectors.filling).should('contain.text', main.name);
 
-    cy.get(`[data-cy="ingredient-item-${sauce._id}"]`)
-      .contains('Добавить')
-      .click();
+    addIngredient(sauce._id);
 
     cy.get(selectors.filling).should('contain.text', sauce.name);
   });
@@ -71,7 +71,7 @@ describe('тесты для страницы конструктора бурге
     it('открывает модалку', () => {
       const ingredient = ingredients.data[0];
 
-      cy.get(`[data-cy="ingredient-item-${ingredient._id}"]`).first().click();
+      openIngredient(ingredient._id);
 
       cy.get(selectors.modal)
         .should('be.visible')
@@ -81,7 +81,7 @@ describe('тесты для страницы конструктора бурге
     it('закрывается по крестику', () => {
       const ingredient = ingredients.data[0];
 
-      cy.get(`[data-cy="ingredient-item-${ingredient._id}"]`).first().click();
+      openIngredient(ingredient._id);
 
       cy.get(selectors.modal).should('be.visible');
 
@@ -93,7 +93,7 @@ describe('тесты для страницы конструктора бурге
     it('закрывается по оверлею', () => {
       const ingredient = ingredients.data[0];
 
-      cy.get(`[data-cy="ingredient-item-${ingredient._id}"]`).first().click();
+      openIngredient(ingredient._id);
 
       cy.get(selectors.modal).should('be.visible');
 
@@ -105,7 +105,7 @@ describe('тесты для страницы конструктора бурге
     it('показывает корректные данные', () => {
       const ingredient = ingredients.data[0];
 
-      cy.get(`[data-cy="ingredient-item-${ingredient._id}"]`).first().click();
+      openIngredient(ingredient._id);
 
       cy.get(selectors.modal)
         .should('contain.text', ingredient.name)
@@ -121,7 +121,7 @@ describe('тесты для страницы конструктора бурге
 
       cy.setCookie('accessToken', 'Bearer test-token');
 
-      cy.visit(testUrl);
+      cy.visit('/');
       cy.wait('@getIngredients');
       cy.wait('@getUser');
     });
@@ -167,7 +167,7 @@ describe('тесты для страницы конструктора бурге
     it('конструктор очищается', () => {
       cy.get(selectors.topBun).should('not.exist');
       cy.get(selectors.bottomBun).should('not.exist');
-
+      cy.get(selectors.filling).should('not.exist');
       cy.contains('Выберите начинку').should('exist');
       cy.contains('Выберите булки').should('exist');
     });

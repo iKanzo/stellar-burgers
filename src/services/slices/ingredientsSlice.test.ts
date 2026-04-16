@@ -1,14 +1,12 @@
-import { getIngredients, ingredientsSlice } from './ingredientsSlice';
+import {
+  getIngredients,
+  ingredientsSlice,
+  initialState
+} from './ingredientsSlice';
 
 const reducer = ingredientsSlice.reducer;
 
 describe('ingredients slice', () => {
-  const initialState = {
-    ingredients: [],
-    isLoading: false,
-    error: null
-  };
-
   it('should handle pending', () => {
     const state = reducer(initialState, getIngredients.pending('', undefined));
 
@@ -49,6 +47,7 @@ describe('ingredients slice', () => {
     );
 
     expect(state.isLoading).toBe(false);
+
     expect(state.error).toBe('network error');
   });
 });
