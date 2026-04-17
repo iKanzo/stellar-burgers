@@ -1,61 +1,65 @@
 /// <reference types="cypress" />
-// ***********************************************
-// This example commands.ts shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-//
-// declare global {
-//   namespace Cypress {
-//     interface Chainable {
-//       login(email: string, password: string): Chainable<void>
-//       drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       visit(originalFn: CommandOriginalFn, url: string, options: Partial<VisitOptions>): Chainable<Element>
-//     }
-//   }
-// }
 
-Cypress.Commands.add('addIngredientByName', (name: string) => {
-  cy.contains(name).parent('li').find('button').first().click();
+Cypress.Commands.add('getIngredientById', (id: string) => {
+  cy.get(`[data-cy="ingredient-item-${id}"]`);
 });
 
-Cypress.Commands.add('setTokens', () => {
-  cy.setCookie('accessToken', 'Bearer mock-token');
-  cy.window().then((win) => {
-    win.localStorage.setItem('refreshToken', 'mock-refresh');
-  });
+Cypress.Commands.add('addIngredient', (id: string) => {
+  cy.getIngredientById(id).contains('Добавить').click();
 });
 
-Cypress.Commands.add('clearTokens', () => {
-  cy.clearCookie('accessToken');
-  cy.clearLocalStorage('refreshToken');
+Cypress.Commands.add('openIngredient', (id: string) => {
+  cy.getIngredientById(id).first().click();
+});
+
+Cypress.Commands.add('checkBun', (name: string) => {
+  cy.get('[data-cy="topBun"]').should('contain.text', name);
+  cy.get('[data-cy="bottomBun"]').should('contain.text', name);
+});
+
+Cypress.Commands.add('checkFilling', (name: string) => {
+  cy.get('[data-cy="filling"]').should('contain.text', name);
+});
+
+Cypress.Commands.add('checkModalVisible', () => {
+  cy.get('[data-cy="modal-window"]').should('be.visible');
+});
+
+Cypress.Commands.add('closeModalByButton', () => {
+  cy.get('[data-cy="button-close"]').click();
+});
+
+Cypress.Commands.add('closeModalByOverlay', () => {
+  cy.get('[data-cy="overlay"]').click({ force: true });
+});
+
+Cypress.Commands.add('checkModalContains', (text: string) => {
+  cy.get('[data-cy="modal-window"]').should('contain.text', text);
+});
+
+Cypress.Commands.add('createOrder', () => {
+  cy.get('[data-cy="orderButton"]').click();
+});
+
+Cypress.Commands.add('checkOrderNumber', (number: number) => {
+  cy.get('[data-cy="modal-window"]').should('contain.text', number);
 });
 
 declare namespace Cypress {
   interface Chainable {
-    addIngredientByName(name: string): Chainable<void>;
-    setTokens(): Chainable<void>;
-    clearTokens(): Chainable<void>;
+    getIngredientById(id: string): Chainable<JQuery<HTMLElement>>;
+    addIngredient(id: string): Chainable<void>;
+    openIngredient(id: string): Chainable<void>;
+
+    checkBun(name: string): Chainable<void>;
+    checkFilling(name: string): Chainable<void>;
+
+    checkModalVisible(): Chainable<void>;
+    closeModalByButton(): Chainable<void>;
+    closeModalByOverlay(): Chainable<void>;
+    checkModalContains(text: string): Chainable<void>;
+
+    createOrder(): Chainable<void>;
+    checkOrderNumber(number: number): Chainable<void>;
   }
 }

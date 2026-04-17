@@ -1,27 +1,26 @@
+import { IngredientsResponse } from '@utils-types';
+
 describe('тесты для страницы конструктора бургера', () => {
-  const selectors = {
-    ingredient: '[data-cy^="ingredient-item-"]',
-    modal: '[data-cy="modal-window"]',
-    closeBtn: '[data-cy="button-close"]',
-    overlay: '[data-cy="overlay"]',
-    topBun: '[data-cy="topBun"]',
-    bottomBun: '[data-cy="bottomBun"]',
-    filling: '[data-cy="filling"]',
-    orderButton: '[data-cy="orderButton"]'
+  let ingredients: IngredientsResponse;
+
+  const getIngredientByType = (type: string) => {
+    const item = ingredients.data.find((i) => i.type === type);
+    if (!item) {
+      throw new Error(`Ингредиент типа ${type} не найден`);
+    }
+    return item;
   };
 
-  const getIngredient = (id: string) =>
-    cy.get(`[data-cy="ingredient-item-${id}"]`);
+  const addBaseIngredients = () => {
+    const bun = getIngredientByType('bun');
+    const main = getIngredientByType('main');
 
-  const addIngredient = (id: string) =>
-    getIngredient(id).contains('Добавить').click();
-
-  const openIngredient = (id: string) => getIngredient(id).first().click();
-
-  let ingredients: any;
+    cy.addIngredient(bun._id);
+    cy.addIngredient(main._id);
+  };
 
   beforeEach(() => {
-    cy.fixture('ingredients.json').then((data) => {
+    cy.fixture('ingredients.json').then((data: IngredientsResponse) => {
       ingredients = data;
 
       cy.intercept('GET', '**/ingredients', {
@@ -38,78 +37,71 @@ describe('тесты для страницы конструктора бурге
       }).as('getUser');
 
       cy.visit('/');
-
       cy.wait('@getIngredients');
       cy.wait('@getUser');
     });
   });
 
-  it('загружает и отображает ингредиенты', () => {
-    cy.get(selectors.ingredient).should('have.length.greaterThan', 0);
+  it('загружает ингредиенты', () => {
+    cy.get('[data-cy^="ingredient-item-"]').should(
+      'have.length.greaterThan',
+      0
+    );
   });
 
-  it('добавляет ингредиенты в конструктор', () => {
-    const bun = ingredients.data.find((i: any) => i.type === 'bun');
-    const main = ingredients.data.find((i: any) => i.type === 'main');
-    const sauce = ingredients.data.find((i: any) => i.type === 'sauce');
+  it('добавляет ингредиенты', () => {
+    const bun = getIngredientByType('bun');
+    const main = getIngredientByType('main');
+    const sauce = getIngredientByType('sauce');
 
-    addIngredient(bun._id);
+    if (!bun || !main || !sauce) {
+      throw new Error('Не найдены необходимые ингредиенты');
+    }
 
-    cy.get(selectors.topBun).should('contain.text', bun.name);
-    cy.get(selectors.bottomBun).should('contain.text', bun.name);
+    cy.addIngredient(bun._id);
+    cy.checkBun(bun.name);
 
-    addIngredient(main._id);
+    cy.addIngredient(main._id);
+    cy.checkFilling(main.name);
 
-    cy.get(selectors.filling).should('contain.text', main.name);
-
-    addIngredient(sauce._id);
-
-    cy.get(selectors.filling).should('contain.text', sauce.name);
+    cy.addIngredient(sauce._id);
+    cy.checkFilling(sauce.name);
   });
 
   describe('Модальные окна', () => {
     it('открывает модалку', () => {
       const ingredient = ingredients.data[0];
 
-      openIngredient(ingredient._id);
-
-      cy.get(selectors.modal)
-        .should('be.visible')
-        .and('contain.text', 'Детали ингредиента');
+      cy.openIngredient(ingredient._id);
+      cy.checkModalVisible();
+      cy.checkModalContains('Детали ингредиента');
     });
 
     it('закрывается по крестику', () => {
       const ingredient = ingredients.data[0];
 
-      openIngredient(ingredient._id);
+      cy.openIngredient(ingredient._id);
+      cy.checkModalVisible();
 
-      cy.get(selectors.modal).should('be.visible');
-
-      cy.get(selectors.closeBtn).click();
-
-      cy.get(selectors.modal).should('not.exist');
+      cy.closeModalByButton();
+      cy.get('[data-cy="modal-window"]').should('not.exist');
     });
 
-    it('закрывается по оверлею', () => {
+    it('закрывается по overlay', () => {
       const ingredient = ingredients.data[0];
 
-      openIngredient(ingredient._id);
+      cy.openIngredient(ingredient._id);
+      cy.checkModalVisible();
 
-      cy.get(selectors.modal).should('be.visible');
-
-      cy.get(selectors.overlay).click({ force: true });
-
-      cy.get(selectors.modal).should('not.exist');
+      cy.closeModalByOverlay();
+      cy.get('[data-cy="modal-window"]').should('not.exist');
     });
 
-    it('показывает корректные данные', () => {
+    it('показывает данные', () => {
       const ingredient = ingredients.data[0];
 
-      openIngredient(ingredient._id);
-
-      cy.get(selectors.modal)
-        .should('contain.text', ingredient.name)
-        .and('be.visible');
+      cy.openIngredient(ingredient._id);
+      cy.checkModalContains(ingredient.name);
     });
   });
 
@@ -127,47 +119,32 @@ describe('тесты для страницы конструктора бурге
     });
 
     it('создаёт заказ', () => {
-      const bun = ingredients.data.find((i: any) => i.type === 'bun');
-      const main = ingredients.data.find((i: any) => i.type === 'main');
+      addBaseIngredients();
 
-      cy.get(`[data-cy="ingredient-item-${bun._id}"]`)
-        .contains('Добавить')
-        .click();
-
-      cy.get(`[data-cy="ingredient-item-${main._id}"]`)
-        .contains('Добавить')
-        .click();
-
-      cy.get(selectors.orderButton).click();
+      cy.createOrder();
       cy.wait('@createOrder');
 
-      cy.get(selectors.modal)
-        .should('be.visible')
-        .and('contain.text', '101552');
+      cy.checkModalVisible();
+      cy.checkOrderNumber(101552);
     });
 
     it('закрывает модалку заказа', () => {
-      const bun = ingredients.data.find((i: any) => i.type === 'bun');
-      const main = ingredients.data.find((i: any) => i.type === 'main');
-      cy.get(`[data-cy="ingredient-item-${bun._id}"]`)
-        .first()
-        .contains('Добавить')
-        .click();
-      cy.get(`[data-cy="ingredient-item-${main._id}"]`)
-        .first()
-        .contains('Добавить')
-        .click();
-      cy.get(selectors.orderButton).click();
+      addBaseIngredients();
+
+      cy.createOrder();
       cy.wait('@createOrder');
-      cy.get(selectors.modal).should('be.visible');
-      cy.get(selectors.closeBtn).click();
-      cy.get(selectors.modal).should('not.exist');
+
+      cy.checkModalVisible();
+      cy.closeModalByButton();
+
+      cy.get('[data-cy="modal-window"]').should('not.exist');
     });
 
-    it('конструктор очищается', () => {
-      cy.get(selectors.topBun).should('not.exist');
-      cy.get(selectors.bottomBun).should('not.exist');
-      cy.get(selectors.filling).should('not.exist');
+    it('очищает конструктор', () => {
+      cy.get('[data-cy="topBun"]').should('not.exist');
+      cy.get('[data-cy="bottomBun"]').should('not.exist');
+      cy.get('[data-cy="filling"]').should('not.exist');
+
       cy.contains('Выберите начинку').should('exist');
       cy.contains('Выберите булки').should('exist');
     });

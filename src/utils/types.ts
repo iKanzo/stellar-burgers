@@ -12,6 +12,11 @@ export type TIngredient = {
   image_mobile: string;
 };
 
+export type IngredientsResponse = {
+  success: boolean;
+  data: TIngredient[];
+};
+
 export type TConstructorIngredient = TIngredient & {
   id: string;
 };
