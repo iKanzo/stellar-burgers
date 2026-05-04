@@ -1,0 +1,89 @@
+{
+  "success": true,
+  "data": [
+    {
+      "_id": "1",
+      "name": "Краторная булка N-200i",
+      "type": "bun",
+      "proteins": 80,
+      "fat": 24,
+      "carbohydrates": 53,
+      "calories": 420,
+      "price": 1255,
+      "image": "https://code.s3.yandex.net/react/code/bun-02.png",
+      "image_mobile": "https://code.s3.yandex.net/react/code/bun-02.png",
+      "image_large": "https://code.s3.yandex.net/react/code/bun-02.png",
+      "__v": 0
+    },
+    {
+      "_id": "2",
+      "name": "Флюоресцентная булка R2-D3",
+      "type": "bun",
+      "proteins": 44,
+      "fat": 26,
+      "carbohydrates": 85,
+      "calories": 643,
+      "price": 988,
+      "image": "https://code.s3.yandex.net/react/code/bun-01.png",
+      "image_mobile": "https://code.s3.yandex.net/react/code/bun-01.png",
+      "image_large": "https://code.s3.yandex.net/react/code/bun-01.png",
+      "__v": 0
+    },
+    {
+      "_id": "3",
+      "name": "Филе Люминесцентного тетраодонтимформа",
+      "type": "main",
+      "proteins": 44,
+      "fat": 26,
+      "carbohydrates": 85,
+      "calories": 643,
+      "price": 988,
+      "image": "https://code.s3.yandex.net/react/code/meat-03.png",
+      "image_mobile": "https://code.s3.yandex.net/react/code/meat-03.png",
+      "image_large": "https://code.s3.yandex.net/react/code/meat-03.png",
+      "__v": 0
+    },
+    {
+      "_id": "4",
+      "name": "Говяжий метеорит (отбивная)",
+      "type": "main",
+      "proteins": 84,
+      "fat": 26,
+      "carbohydrates": 85,
+      "calories": 987,
+      "price": 3000,
+      "image": "https://code.s3.yandex.net/react/code/meat-02.png",
+      "image_mobile": "https://code.s3.yandex.net/react/code/meat-02.png",
+      "image_large": "https://code.s3.yandex.net/react/code/meat-02.png",
+      "__v": 0
+    },
+    {
+      "_id": "5",
+      "name": "Соус Spicy-X",
+      "type": "sauce",
+      "proteins": 30,
+      "fat": 20,
+      "carbohydrates": 40,
+      "calories": 30,
+      "price": 90,
+      "image": "https://code.s3.yandex.net/react/code/sauce-02.png",
+      "image_mobile": "https://code.s3.yandex.net/react/code/sauce-02.png",
+      "image_large": "https://code.s3.yandex.net/react/code/sauce-02.png",
+      "__v": 0
+    },
+    {
+      "_id": "6",
+      "name": "Соус с шипами Антарианского ящера",
+      "type": "sauce",
+      "proteins": 30,
+      "fat": 20,
+      "carbohydrates": 40,
+      "calories": 30,
+      "price": 90,
+      "image": "https://code.s3.yandex.net/react/code/sauce-01.png",
+      "image_mobile": "https://code.s3.yandex.net/react/code/sauce-01.png",
+      "image_large": "https://code.s3.yandex.net/react/code/sauce-01.png",
+      "__v": 0
+    }
+  ]
+}

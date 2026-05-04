@@ -20,7 +20,7 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
 }) => (
   <section className={styles.burger_constructor}>
     {constructorItems.bun ? (
-      <div className={`${styles.element} mb-4 mr-4`}>
+      <div data-cy='topBun' className={`${styles.element} mb-4 mr-4`}>
         <ConstructorElement
           type='top'
           isLocked
@@ -37,16 +37,18 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
       </div>
     )}
 
-    <ul className={styles.elements}>
+    <ul data-cy='filling' className={styles.elements}>
       {constructorItems.ingredients.length > 0 ? (
-        constructorItems.ingredients.map((item: any, index: number) => (
-          <BurgerConstructorElement
-            key={item.id}
-            ingredient={item}
-            index={index}
-            totalItems={constructorItems.ingredients.length}
-          />
-        ))
+        <span>
+          {constructorItems.ingredients.map((item: any, index: number) => (
+            <BurgerConstructorElement
+              key={item.id}
+              ingredient={item}
+              index={index}
+              totalItems={constructorItems.ingredients.length}
+            />
+          ))}
+        </span>
       ) : (
         <div
           className={`${styles.noBuns} ml-8 mb-4 mr-5 text text_type_main-default`}
@@ -57,7 +59,7 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
     </ul>
 
     {constructorItems.bun ? (
-      <div className={`${styles.element} mt-4 mr-4`}>
+      <div data-cy='bottomBun' className={`${styles.element} mt-4 mr-4`}>
         <ConstructorElement
           type='bottom'
           isLocked
@@ -76,7 +78,9 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
 
     <div className={`${styles.total} mt-10 mr-4`}>
       <div className={`${styles.cost} mr-10`}>
-        <p className={`text ${styles.text} mr-2`}>{price}</p>
+        <p data-cy='constructor-price' className={`text ${styles.text} mr-2`}>
+          {price}
+        </p>
         <CurrencyIcon type='primary' />
       </div>
       <Button
@@ -84,6 +88,7 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
         type='primary'
         size='large'
         onClick={onOrderClick}
+        data-cy='orderButton'
       >
         Оформить заказ
       </Button>
